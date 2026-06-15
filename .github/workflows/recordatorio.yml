@@ -1,0 +1,19 @@
+name: Recordatorio de Actualización
+on:
+  schedule:
+    - cron: '0 0 1 3,7,9,12 *'
+
+jobs:
+  crear_issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Crear Issue de revisión
+        uses: imjohnbo/issue-bot@v3
+        with:
+          assignees: AlejandroDukesini
+          title: "Actualización de proyecto programada."
+          body: "Pasaron 3 meses. Revisa 1. Revisar UX/UI 2. Actualizaciones de dependencias y tecnologías 3. Limpia código.."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
