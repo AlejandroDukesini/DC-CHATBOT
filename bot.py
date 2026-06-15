@@ -1,8 +1,3 @@
-"""
-Bot de Discord Multi-IA
-Integra ChatGPT, Grok y Gemini con sistema de respuestas interactivas
-"""
-
 import discord
 from discord.ext import commands
 import asyncio
@@ -10,33 +5,39 @@ import json
 import os
 from datetime import datetime
 from typing import Optional, Dict, Any
+from dotenv import load_dotenv
 
-# TODO: INTERVENCIÓN HUMANA - Instalar dependencias necesarias:
-# pip install discord.py openai google-generativeai anthropic
-# pip install python-dotenv (opcional, para variables de entorno)
+# Cargar variables de entorno desde archivo .env
+load_dotenv()
 
-# TODO: INTERVENCIÓN HUMANA - Configurar variables de entorno:
-# Crea un archivo .env en el mismo directorio con las siguientes variables:
-# DISCORD_TOKEN=Tu_token_de_bot_de_discord
-# OPENAI_API_KEY=Tu_api_key_de_openai
-# GROK_API_KEY=Tu_api_key_de_xai
-# GEMINI_API_KEY=Tu_api_key_de_google
-# O bien reemplaza los valores None abajo con tus claves directamente
-
-# Configuración de tokens y claves API
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")  # TODO: INTERVENCIÓN HUMANA - Reemplazar con tu token de Discord
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # TODO: INTERVENCIÓN HUMANA - Reemplazar con tu API key de OpenAI
-GROK_API_KEY = os.getenv("GROK_API_KEY")  # TODO: INTERVENCIÓN HUMANA - Reemplazar con tu API key de xAI (Grok)
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # TODO: INTERVENCIÓN HUMANA - Reemplazar con tu API key de Google
+# Configuración de tokens y claves API (cargados desde archivo .env)
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GROK_API_KEY = os.getenv("GROK_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Configuración del bot
 COMMAND_PREFIX = "&"
+
+# CONFIGURACIÓN DE INTENTS DEFINITIVA
+# NOTA: Estos intents privilegiados deben estar habilitados en:
+# https://discord.com/developers/applications/[TU_APP]/bot
+# En la sección "Privileged Gateway Intents" activa:
+# - MESSAGE CONTENT INTENT (Vital para que el bot lea mensajes)
+# - SERVER MEMBERS INTENT (Para información de miembros)
+# - PRESENCE INTENT (Para estado de usuarios)
 BOT_INTENTS = discord.Intents.default()
-BOT_INTENTS.message_content = True
-BOT_INTENTS.messages = True
+BOT_INTENTS.message_content = True  # CRUCIAL: Para leer contenido de mensajes
+BOT_INTENTS.members = True  # Para acceder a información de miembros del servidor
+BOT_INTENTS.presences = True  # Para acceder a estado/presencia de usuarios
+BOT_INTENTS.guilds = True  # Para eventos de servidor
+BOT_INTENTS.messages = True  # Para recibir mensajes
 
 # Inicialización del bot
 bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=BOT_INTENTS)
+
+# Eliminar comando help por defecto de Discord para evitar conflicto
+bot.remove_command('help')
 
 # Almacenamiento en memoria para respuestas completas
 response_storage: Dict[str, Dict[str, Any]] = {}
@@ -71,8 +72,6 @@ class OpenAIProvider(AIProvider):
     """Proveedor OpenAI (ChatGPT)"""
     
     def _initialize_client(self):
-        # TODO: INTERVENCIÓN HUMANA - Asegurarse de tener la librería openai instalada
-        # pip install openai
         try:
             import openai
             self.client = openai.AsyncOpenAI(api_key=self.api_key)
@@ -89,7 +88,7 @@ class OpenAIProvider(AIProvider):
         
         try:
             response = await self.client.chat.completions.create(
-                model="gpt-4o-mini",  # TODO: INTERVENCIÓN HUMANA - Puedes cambiar el modelo según tu plan
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": "Eres un asistente útil y conciso."},
                     {"role": "user", "content": prompt}
@@ -125,14 +124,11 @@ class GrokProvider(AIProvider):
     """Proveedor xAI (Grok)"""
     
     def _initialize_client(self):
-        # TODO: INTERVENCIÓN HUMANA - Asegurarse de tener la librería anthropic instalada para xAI
-        # pip install anthropic
-        # Nota: xAI usa una API similar a OpenAI, puedes usar openai con base_url diferente
         try:
             import openai
             self.client = openai.AsyncOpenAI(
                 api_key=self.api_key,
-                base_url="https://api.x.ai/v1"  # TODO: INTERVENCIÓN HUMANA - Verificar URL base de xAI
+                base_url="https://api.x.ai/v1"
             )
         except ImportError:
             print("ERROR: La librería openai no está instalada. Ejecuta: pip install openai")
@@ -147,7 +143,7 @@ class GrokProvider(AIProvider):
         
         try:
             response = await self.client.chat.completions.create(
-                model="grok-beta",  # TODO: INTERVENCIÓN HUMANA - Verificar modelo actual de Grok
+                model="grok-beta",
                 messages=[
                     {"role": "system", "content": "Eres un asistente útil y conciso."},
                     {"role": "user", "content": prompt}
@@ -169,21 +165,15 @@ class GeminiProvider(AIProvider):
     """Proveedor Google Gen AI (Gemini)"""
     
     def _initialize_client(self):
-        # TODO: INTERVENCIÓN HUMANA - Asegurarse de tener la librería google-generativeai instalada
-        # pip install google-generativeai
         try:
-            import google.generativeai as genai
-            genai.configure(api_key=self.api_key)
-            self.client = genai.GenerativeModel('gemini-pro')  # Modelo de texto
-            self.image_client = genai.GenerativeModel('gemini-pro-vision')  # Modelo multimodal
+            from google import genai
+            self.client = genai.Client(api_key=self.api_key)
         except ImportError:
-            print("ERROR: La librería google-generativeai no está instalada. Ejecuta: pip install google-generativeai")
+            print("ERROR: La librería google-genai no está instalada. Ejecuta: pip install google-genai")
             self.client = None
-            self.image_client = None
         except Exception as e:
             print(f"ERROR al inicializar Gemini: {e}")
             self.client = None
-            self.image_client = None
     
     async def generate_text(self, prompt: str, **kwargs) -> str:
         if not self.client:
@@ -191,12 +181,9 @@ class GeminiProvider(AIProvider):
         
         try:
             response = await asyncio.to_thread(
-                self.client.generate_content,
-                prompt,
-                generation_config=genai.types.GenerationConfig(
-                    max_output_tokens=2000,
-                    temperature=0.7,
-                )
+                self.client.models.generate_content,
+                model="gemini-2.0-flash-exp",
+                contents=prompt
             )
             return response.text
         except Exception as e:
@@ -205,17 +192,8 @@ class GeminiProvider(AIProvider):
             raise Exception(f"Error en Gemini: {str(e)}")
     
     async def generate_image(self, prompt: str, **kwargs) -> str:
-        if not self.image_client:
-            raise Exception("Cliente Gemini no inicializado")
-        
-        try:
-            # Gemini no genera imágenes directamente, pero puede describirlas
-            # TODO: INTERVENCIÓN HUMANA - Para generación real de imágenes, considera usar DALL-E u otro servicio
-            raise Exception("Gemini no soporta generación de imágenes directamente. Usa &imagen con otro proveedor o implementa integración con DALL-E.")
-        except Exception as e:
-            if "quota" in str(e).lower() or "limit" in str(e).lower():
-                raise Exception("Créditos de Gemini agotados. Contacta al administrador.")
-            raise Exception(f"Error en Gemini Image: {str(e)}")
+        # Gemini con la nueva librería google.genai no soporta generación de imágenes directamente
+        raise Exception("Gemini no soporta generación de imágenes directamente. Usa &imagen con OpenAI DALL-E.")
 
 # Inicialización de proveedores
 providers = {
