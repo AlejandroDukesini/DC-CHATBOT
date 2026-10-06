@@ -1,0 +1,11 @@
+{
+  "name": "@dc-chatbot/core",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Lógica de negocio compartida entre el bot de Discord y la demo web.",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  }
+}

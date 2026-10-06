@@ -1,2 +1,20 @@
-multimedia/
+# Dependencias y builds
+node_modules/
+dist/
+coverage/
+.netlify/
+
+# Secretos (usa .env.example como plantilla)
+.env
+.env.*
+!.env.example
 token.txt
+
+# Datos locales del bot
+apps/bot/data/
+
+# Varios
+multimedia/
+*.log
+.DS_Store
+Thumbs.db

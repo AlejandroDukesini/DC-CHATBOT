@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [Principal, Beta]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            apps/bot/package-lock.json
+      - name: Instalar (núcleo + web)
+        run: npm ci
+      - name: Instalar (bot)
+        run: npm ci --prefix apps/bot
+      - name: Lint
+        run: npm run lint
+      - name: Tests
+        run: npm test
+      - name: Build de la demo
+        run: npm run build
