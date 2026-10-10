@@ -2,6 +2,8 @@
   "name": "@dc-chatbot/bot",
   "version": "2.0.0",
   "private": true,
+  "license": "CC-BY-NC-SA-4.0",
+  "author": "Café Con Alejo (https://github.com/AlejandroDukesini)",
   "type": "module",
   "description": "Bot de Discord: adaptador discord.js sobre @dc-chatbot/core.",
   "engines": {

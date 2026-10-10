@@ -2,6 +2,8 @@
   "name": "@dc-chatbot/core",
   "version": "1.0.0",
   "private": true,
+  "license": "CC-BY-NC-SA-4.0",
+  "author": "Café Con Alejo (https://github.com/AlejandroDukesini)",
   "type": "module",
   "description": "Lógica de negocio compartida entre el bot de Discord y la demo web.",
   "main": "./src/index.js",

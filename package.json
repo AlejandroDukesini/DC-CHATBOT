@@ -1,6 +1,8 @@
 {
   "name": "dc-chatbot",
   "private": true,
+  "license": "CC-BY-NC-SA-4.0",
+  "author": "Café Con Alejo (https://github.com/AlejandroDukesini)",
   "type": "module",
   "description": "Bot de Discord modular (IA investigadora, moderación, economía, radio, banners) con demo web.",
   "workspaces": [

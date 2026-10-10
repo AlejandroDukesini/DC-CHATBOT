@@ -10,6 +10,7 @@
 ![Slash commands](https://img.shields.io/badge/slash%20commands-38-5865F2?logo=discord&logoColor=white)
 ![Sin Administrador](https://img.shields.io/badge/permisos-sin%20Administrador-2ea44f)
 ![React](https://img.shields.io/badge/demo-React%2019%20%2B%20Vite-61DAFB?logo=react&logoColor=black)
+[![Licencia: CC BY-NC-SA 4.0](https://img.shields.io/badge/licencia-CC%20BY--NC--SA%204.0-lightgrey)](LICENSE)
 
 <br>
 
@@ -26,7 +27,8 @@
 [Comandos](#-guía-de-comandos) •
 [Arquitectura](#-arquitectura) •
 [top.gg](#-publicar-en-topgg) •
-[Problemas](#-solución-de-problemas)
+[Problemas](#-solución-de-problemas) •
+[Licencia](#-licencia)
 
 </div>
 
@@ -88,7 +90,6 @@ Los **37 comandos** funcionan con prefijo (`&` por defecto) **y** como slash com
 ```bash
 git clone https://github.com/AlejandroDukesini/DC-CHATBOT.git
 cd DC-CHATBOT
-git checkout Beta              # mientras Beta no se fusione en Principal
 npm install                    # núcleo + demo web
 npm run bot:install            # dependencias del bot
 cp .env.example .env           # Windows: copy .env.example .env
@@ -419,6 +420,23 @@ El bot guarda, por servidor y en un archivo JSON local: la configuración, los s
 
 ## 📄 Licencia
 
-Proyecto proporcionado tal cual con fines educativos y de desarrollo.
+© 2026 **Café Con Alejo** ([@AlejandroDukesini](https://github.com/AlejandroDukesini)).
+Este proyecto se distribuye bajo la licencia [**Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)**](LICENSE).
+
+| | |
+|---|---|
+| ✅ **Puedes** | Usarlo, copiarlo, redistribuirlo, modificarlo y crear versiones derivadas |
+| 👤 **Atribución** | Debes dar crédito al autor original, enlazar la licencia e indicar si hiciste cambios |
+| 🚫 **No comercial** | No puedes usarlo con fines comerciales ni monetarios |
+| 🔁 **Compartir igual** | Toda copia o versión modificada debe distribuirse con esta misma licencia |
+
+Crédito sugerido para tus copias o versiones modificadas:
+
+```text
+Basado en DC Chatbot de Café Con Alejo (https://github.com/AlejandroDukesini/DC-CHATBOT),
+licenciado bajo CC BY-NC-SA 4.0. Modificado por <tu nombre>.
+```
+
+Las bibliotecas de terceros (discord.js, React, etc.) conservan sus propias licencias.
 
 <div align="center"><sub>Hecho con ☕ y discord.js · 🌋 sin sobrevolar volcanes</sub></div>
