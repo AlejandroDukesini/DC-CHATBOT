@@ -50,11 +50,15 @@ function execute(def, rawArgs, ctx) {
   return def.data === 'write' ? store.withLock(ctx.guild.id, run) : run();
 }
 
-client.once(Events.ClientReady, (c) => {
+client.once(Events.ClientReady, async (c) => {
   logger.info(`✅ Conectado como ${c.user.tag} en ${c.guilds.cache.size} servidor(es) · ${toSlashCommands().length} comandos`);
   const ai = deps.ai.configured();
   logger.info(`🤖 IA de terceros: ${ai.length ? ai.join(', ') : 'ninguna (opcional)'} · 🔎 investigador: activo`);
   logger.info(`🔗 Invitación: ${c.generateInvite({ scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands], permissions: INVITE_PERMISSIONS })}`);
+  // Ajustes del Developer Portal que impiden invitar el bot (y que top.gg rechaza).
+  const app = await c.application.fetch().catch(() => null);
+  if (app?.botRequireCodeGrant) logger.warn('"Requires OAuth2 Code Grant" está activado: el enlace de invitación no funcionará. Desactívalo en Developer Portal → Bot.');
+  if (app && !app.botPublic) logger.warn('"Public Bot" está desactivado: solo tú puedes invitar el bot. Actívalo en Developer Portal → Bot para publicarlo.');
 });
 
 // Comandos con prefijo (&ayuda, &ban…)

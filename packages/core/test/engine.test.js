@@ -73,7 +73,8 @@ describe('slash commands', () => {
   const json = toSlashCommands();
 
   it('genera un slash command válido por cada comando', () => {
-    expect(json).toHaveLength(COMMANDS.length);
+    expect(json).toHaveLength(COMMANDS.length + 1); // + /help
+    expect(new Set(json.map((c) => c.name)).size).toBe(json.length);
     for (const cmd of json) {
       expect(cmd.name).toMatch(/^[a-z0-9-]{1,32}$/);
       expect(cmd.description.length).toBeGreaterThan(0);
@@ -81,6 +82,11 @@ describe('slash commands', () => {
       const firstOptional = cmd.options.findIndex((o) => !o.required);
       if (firstOptional >= 0) expect(cmd.options.slice(firstOptional).every((o) => !o.required)).toBe(true);
     }
+  });
+
+  it('publica /help como alias de /ayuda', () => {
+    const help = json.find((c) => c.name === 'help');
+    expect(help).toMatchObject({ ...json.find((c) => c.name === 'ayuda'), name: 'help' });
   });
 
   it('restringe por defecto los comandos de moderación', () => {

@@ -32,6 +32,7 @@ const general = [
   {
     name: 'ayuda',
     aliases: ['help', 'h', 'comandos'],
+    slashAliases: ['help'],
     category: 'general',
     description: 'Lista los comandos o explica uno en detalle.',
     options: [{ name: 'comando', type: 'string', description: 'Comando a explicar' }],
@@ -62,6 +63,7 @@ const general = [
           name: `${cat.emoji} ${cat.label}`,
           value: COMMANDS.filter((c) => c.category === key).map((c) => `\`${c.name}\``).join(' '),
         })),
+        footer: '🌋 No puedo sobrevolar volcanes, pero todo lo de arriba sí lo hago.',
       });
     },
   },

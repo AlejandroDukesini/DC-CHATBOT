@@ -30,7 +30,8 @@ function toOption(opt) {
 }
 
 export function toSlashCommands(commands = COMMANDS) {
-  return commands.map((def) => {
+  // `slashAliases` publica el mismo comando con otro nombre (p. ej. /help → ayuda); findCommand resuelve el alias.
+  return commands.flatMap((def) => [def, ...(def.slashAliases ?? []).map((name) => ({ ...def, name }))]).map((def) => {
     const options = (def.options ?? []).map(toOption);
     // Discord exige que las opciones obligatorias vayan antes que las opcionales.
     options.sort((a, b) => Number(b.required) - Number(a.required));
