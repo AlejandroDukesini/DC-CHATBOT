@@ -21,13 +21,14 @@ export function createRateLimiter({ limit = 15, windowMs = 60_000, now = () => D
   };
 }
 
-export function createResearchHandler({ fetch: fetchFn = globalThis.fetch, contactEmail, rateLimiter = createRateLimiter(), logger = console } = {}) {
+export function createResearchHandler({ fetch: fetchFn, contactEmail, rateLimiter = createRateLimiter(), logger = console } = {}) {
   return async function handle({ query, ip = 'unknown' }) {
     if (!rateLimiter(ip)) {
       return { status: 429, body: { error: 'Demasiadas consultas seguidas. Espera un minuto e inténtalo de nuevo.' } };
     }
     try {
-      const result = await research(query, { fetch: fetchFn, contactEmail });
+      // globalThis.fetch se lee en cada llamada, no al crear el manejador (permite sustituirlo en tests).
+      const result = await research(query, { fetch: fetchFn ?? globalThis.fetch, contactEmail });
       return { status: 200, body: result };
     } catch (err) {
       if (isUserError(err)) return { status: 400, body: { error: err.message } };
